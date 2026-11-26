@@ -22,10 +22,14 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        brew install xcodegen
+        brew install xcodegen rust
 
-    - name: Generate Project and Build
+    - name: Generate Xcode Project
       run: |
-        cd ios-app
-        xcodegen generate || true
-        xcodebuild -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        # Генерация проекта через xcodegen из корневого каталога
+        xcodegen generate
+
+    - name: Build Project
+      run: |
+        # Сборка проекта из корня репозитория
+        xcodebuild -project AirCard-iOS.xcodeproj -scheme AirCard -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
