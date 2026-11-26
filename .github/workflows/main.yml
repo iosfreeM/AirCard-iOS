@@ -25,9 +25,25 @@ jobs:
         brew install xcodegen rust
         rustup target add aarch64-apple-ios-sim x86_64-apple-ios
 
+    - name: Build Rust Core / Scripts
+      run: |
+        # Если в проекте есть скрипт сборки ядра/зависимостей, выполняем его
+        if [ -f "build-ios.sh" ]; then
+          chmod +x build-ios.sh
+          ./build-ios.sh
+        elif [ -f "ios-app/build-ios.sh" ]; then
+          cd ios-app && chmod +x build-ios.sh && ./build-ios.sh && cd ..
+        fi
+
     - name: Generate Xcode Project
       run: |
         xcodegen generate
+
+    - name: Resolve Swift Packages
+      run: |
+        xcodebuild -resolvePackageDependencies \
+          -project AirCard-iOS.xcodeproj \
+          -scheme AirCard-iOS
 
     - name: Build Project
       run: |
