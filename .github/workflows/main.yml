@@ -1,4 +1,4 @@
-name: Build iOS App
+name: Build iOS App (macOS 15 Intel)
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
 
 jobs:
   build:
-    name: Build iOS Simulator / App
-    runs-on: macos-latest
+    name: Build on macOS 15 Intel
+    runs-on: macos-15-intel
 
     steps:
     - name: Checkout Repository
@@ -20,8 +20,11 @@ jobs:
       with:
         xcode-version: latest-stable
 
-    - name: Check Xcode Version
-      run: xcodebuild -version
+    - name: Check Xcode Version & System
+      run: |
+        sw_vers
+        uname -m
+        xcodebuild -version
 
     - name: Build Project
       run: |
