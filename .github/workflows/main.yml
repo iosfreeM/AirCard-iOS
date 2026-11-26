@@ -23,6 +23,7 @@ jobs:
     - name: Install Dependencies
       run: |
         brew install xcodegen rust
+        rustup target add aarch64-apple-ios-sim x86_64-apple-ios
 
     - name: Generate Xcode Project
       run: |
@@ -30,8 +31,11 @@ jobs:
 
     - name: Build Project
       run: |
-        # Выведет список всех доступных схем в лог для проверки
-        xcodebuild -list -project AirCard-iOS.xcodeproj
-        
-        # Сборка с правильной схемой AirCard-iOS
-        xcodebuild -project AirCard-iOS.xcodeproj -scheme AirCard-iOS -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        xcodebuild clean build \
+          -project AirCard-iOS.xcodeproj \
+          -scheme AirCard-iOS \
+          -sdk iphonesimulator \
+          -destination "generic/platform=iOS Simulator" \
+          CODE_SIGN_IDENTITY="" \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO
