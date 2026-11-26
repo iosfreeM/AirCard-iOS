@@ -20,19 +20,31 @@ jobs:
       with:
         xcode-version: latest-stable
 
+    - name: Fix Xcode Developer Directory
+      run: |
+        # Жестко привязываем системный путь к установленному Xcode, чтобы cc не падал
+        sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+        export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+        echo "DEVELOPER_DIR=$DEVELOPER_DIR" >> $GITHUB_ENV
+
     - name: Install Dependencies
       run: |
         brew install xcodegen rust
         rustup target add aarch64-apple-ios-sim x86_64-apple-ios
 
-    - name: Build Rust Core / Scripts
+    - name: Build Rust Core & Dependencies
       run: |
-        # Если в проекте есть скрипт сборки ядра/зависимостей, выполняем его
         if [ -f "build-ios.sh" ]; then
           chmod +x build-ios.sh
           ./build-ios.sh
         elif [ -f "ios-app/build-ios.sh" ]; then
           cd ios-app && chmod +x build-ios.sh && ./build-ios.sh && cd ..
+        else
+          if [ -f "Cargo.toml" ]; then
+            cargo build --target x86_64-apple-ios
+          elif [ -f "ios-app/Cargo.toml" ]; then
+            cd ios-app && cargo build --target x86_64-apple-ios && cd ..
+          fi
         fi
 
     - name: Generate Xcode Project
