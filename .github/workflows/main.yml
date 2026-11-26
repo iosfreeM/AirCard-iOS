@@ -1,4 +1,4 @@
-name: Build iOS App (macOS 15 Intel)
+name: Build iOS App on macOS 15 Intel
 
 on:
   push:
@@ -20,13 +20,12 @@ jobs:
       with:
         xcode-version: latest-stable
 
-    - name: Check Xcode Version & System
+    - name: Install Dependencies
       run: |
-        sw_vers
-        uname -m
-        xcodebuild -version
+        brew install xcodegen
 
-    - name: Build Project
+    - name: Generate Project and Build
       run: |
         cd ios-app
-        xcodebuild -project AirCard-iOS.xcodeproj -scheme AirCard -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
+        xcodegen generate || true
+        xcodebuild -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 16' build CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO
